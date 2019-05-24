@@ -8,7 +8,6 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Map;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
@@ -148,8 +147,12 @@ public class HttpRequestUtils {
 		return this.postRequest(url, null, bodyParam);
 	}
 
-	public CloseableHttpResponse postRequest(String url, Map<String, Object> urlParams) {
+	public CloseableHttpResponse postRequest(Object urlParams, String url) {
 		return this.postRequest(url, urlParams, null);
+	}
+
+	public CloseableHttpResponse postRequest(String url) {
+		return this.postRequest(url, null, null);
 	}
 
 	/** 把返回数据转换为指定对象 */
