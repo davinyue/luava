@@ -2,8 +2,6 @@ package org.linuxprobe.luava.http;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -11,7 +9,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Map;
-import java.util.Set;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
@@ -74,35 +71,6 @@ public class HttpRequestUtils {
 	public HttpRequestUtils() {
 	}
 
-	/** map转url参数 */
-	private static String mapToUrlParam(Map<String, Object> map) {
-		StringBuilder result = new StringBuilder();
-		if (map != null && !map.isEmpty()) {
-			Set<String> paramNames = map.keySet();
-			boolean flag = false;
-			for (String paramName : paramNames) {
-				Object paramValue = map.get(paramName);
-				if (paramValue != null && !paramValue.toString().isEmpty()) {
-					if (!flag) {
-						flag = true;
-						try {
-							result.append(paramName + "=" + URLEncoder.encode(paramValue.toString(), "UTF-8"));
-						} catch (UnsupportedEncodingException e) {
-							throw new IllegalArgumentException(e);
-						}
-					} else {
-						try {
-							result.append("&" + paramName + "=" + URLEncoder.encode(paramValue.toString(), "UTF-8"));
-						} catch (UnsupportedEncodingException e) {
-							throw new IllegalArgumentException(e);
-						}
-					}
-				}
-			}
-		}
-		return result.toString();
-	}
-
 	/** get请求 */
 	public CloseableHttpResponse getRequest(String url) {
 		if (logger.isDebugEnabled()) {
@@ -120,9 +88,9 @@ public class HttpRequestUtils {
 	}
 
 	/** get请求 */
-	public CloseableHttpResponse getRequest(String url, Map<String, Object> params) {
-		if (params != null && !params.isEmpty()) {
-			String urlParam = mapToUrlParam(params);
+	public CloseableHttpResponse getRequest(String url, Object urlParams) {
+		if (urlParams != null) {
+			String urlParam = Qs.stringify(urlParams);
 			if (url.indexOf("?") != -1) {
 				url += "&" + urlParam;
 			} else {
@@ -132,9 +100,9 @@ public class HttpRequestUtils {
 		return this.getRequest(url);
 	}
 
-	public CloseableHttpResponse postRequest(String url, Map<String, Object> urlParams, Object bodyParam) {
-		if (urlParams != null && !urlParams.isEmpty()) {
-			String urlParam = mapToUrlParam(urlParams);
+	public CloseableHttpResponse postRequest(String url, Object urlParams, Object bodyParam) {
+		if (urlParams != null) {
+			String urlParam = Qs.stringify(urlParams);
 			if (url.indexOf("?") != -1) {
 				url += "&" + urlParam;
 			} else {
