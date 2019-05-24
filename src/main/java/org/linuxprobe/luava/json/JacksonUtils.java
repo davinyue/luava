@@ -441,8 +441,8 @@ public class JacksonUtils {
 	/**
 	 * 获取泛型用于objectMapper转换的javaType
 	 * 
-	 * @param rawType          类型
-	 * @param parameterClasses JavaType构造的类型
+	 * @param rawType        类型
+	 * @param parameterTypes JavaType构造的类型
 	 */
 	public static JavaType getJavaType(Class<?> rawType, JavaType... parameterTypes) {
 		return TypeFactory.defaultInstance().constructParametricType(rawType, parameterTypes);
