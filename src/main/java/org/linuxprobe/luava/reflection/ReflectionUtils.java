@@ -284,7 +284,7 @@ public class ReflectionUtils {
 		Type type = ((ParameterizedType) objClass.getGenericSuperclass()).getActualTypeArguments()[order];
 		Class<?> genericsCalss = null;
 		try {
-			genericsCalss = Class.forName(type.getTypeName());
+			genericsCalss = ReflectionUtils.class.getClassLoader().loadClass(type.getTypeName());
 			return genericsCalss;
 		} catch (ClassNotFoundException e) {
 			throw new IllegalArgumentException(e);
