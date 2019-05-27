@@ -58,7 +58,12 @@ public class ReflectionUtils {
 		return null;
 	}
 
-	/** 获取属性的set方法 */
+	/**
+	 * 获取属性的set方法
+	 * 
+	 * @param objClass 要查找的类类型
+	 * @param field    属性
+	 */
 	public static Method getMethodOfFieldSet(Class<?> objClass, Field field) {
 		if (objClass == null || field == null) {
 			return null;
@@ -74,9 +79,28 @@ public class ReflectionUtils {
 		return methodOfSet;
 	}
 
-	/** 获取属性的get方法 */
-	public static Method getMethodOfFieldGet(Class<?> objClass, Field field) {
+	/**
+	 * 获取属性的set方法
+	 * 
+	 * @param objClass  要查找的类类型
+	 * @param fieldName 属性名称
+	 */
+	public static Method getMethodOfFieldSet(Class<?> objClass, String fieldName) {
+		if (objClass == null || fieldName == null || fieldName.isEmpty()) {
+			return null;
+		} else {
+			Field field = getField(objClass, fieldName);
+			return getMethodOfFieldSet(objClass, field);
+		}
+	}
 
+	/**
+	 * 获取属性的get方法
+	 * 
+	 * @param objClass 要查找的类类型
+	 * @param field    属性
+	 */
+	public static Method getMethodOfFieldGet(Class<?> objClass, Field field) {
 		if (objClass == null || field == null) {
 			return null;
 		}
@@ -96,13 +120,36 @@ public class ReflectionUtils {
 		try {
 			methodOfGet = objClass.getMethod(prefix + funSuffix);
 		} catch (NoSuchMethodException | SecurityException e) {
-			throw new IllegalArgumentException(e);
 		}
 		return methodOfGet;
 	}
 
-	/** 设置属性值 */
+	/**
+	 * 获取属性的get方法
+	 * 
+	 * @param objClass  要查找的类类型
+	 * @param fieldName 属性名称
+	 */
+	public static Method getMethodOfFieldGet(Class<?> objClass, String fieldName) {
+		if (objClass == null || fieldName == null || fieldName.isEmpty()) {
+			return null;
+		} else {
+			Field field = getField(objClass, fieldName);
+			return getMethodOfFieldGet(objClass, field);
+		}
+	}
+
+	/**
+	 * 设置属性值
+	 * 
+	 * @param obj   要操作的对象
+	 * @param field 要设置的属性
+	 * @param value 要设置的值
+	 */
 	public static void setField(Object obj, Field field, Object value) {
+		if (obj == null || field == null) {
+			return;
+		}
 		Class<?> objClass = getRealCalssOfProxyClass(obj.getClass());
 		Method methodOfSet = getMethodOfFieldSet(objClass, field);
 		if (methodOfSet != null) {
@@ -111,87 +158,130 @@ public class ReflectionUtils {
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				throw new IllegalArgumentException(e);
 			}
+		} else {
+			field.setAccessible(true);
+			try {
+				field.set(objClass, value);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				throw new IllegalArgumentException(e);
+			}
 		}
 	}
 
-	/** 获取属性值 */
+	/**
+	 * 设置属性值
+	 * 
+	 * @param obj       要操作的对象
+	 * @param fieldName 要设置的属性名称
+	 * @param value     要设置的值
+	 */
+	public static void setField(Object obj, String fieldName, Object value) {
+		if (obj == null || fieldName == null || fieldName.isEmpty()) {
+			return;
+		} else {
+			Field field = getField(obj.getClass(), fieldName);
+			if (field != null) {
+				setField(obj, field, value);
+			}
+		}
+	}
+
+	/**
+	 * 获取属性值
+	 * 
+	 * @param obj   要操作的对象
+	 * @param field 要获取的属性
+	 */
 	public static Object getFieldValue(Object obj, Field field) {
+		if (obj == null || field == null) {
+			return null;
+		}
 		Class<?> objClass = getRealCalssOfProxyClass(obj.getClass());
 		Method getMethod = null;
 		try {
 			getMethod = getMethodOfFieldGet(objClass, field);
 		} catch (Exception e) {
 		}
+		Object value = null;
 		if (getMethod != null) {
 			getMethod.setAccessible(true);
 			try {
-				Object value = getMethod.invoke(obj);
-				return value;
+				value = getMethod.invoke(obj);
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				throw new IllegalArgumentException(e);
 			}
 		} else {
 			field.setAccessible(true);
 			try {
-				return field.get(obj);
+				value = field.get(obj);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				throw new RuntimeException(e);
 			}
 		}
-
+		return value;
 	}
 
-	/** 获取属性值 */
+	/**
+	 * 获取属性值
+	 * 
+	 * @param obj       要操作的对象
+	 * @param fieldName 要获取的属性名称
+	 */
 	public static Object getFieldValue(Object obj, String fieldName) {
-		Class<?> objClass = getRealCalssOfProxyClass(obj.getClass());
-		Field field = null;
-		try {
-			field = objClass.getDeclaredField(fieldName);
-		} catch (NoSuchFieldException | SecurityException e1) {
-			throw new RuntimeException(e1);
+		if (obj == null || fieldName == null || fieldName.isEmpty()) {
+			return null;
 		}
-		Method getMethod = getMethodOfFieldGet(objClass, field);
-		getMethod.setAccessible(true);
-		try {
-			Object value = getMethod.invoke(obj);
-			return value;
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			throw new IllegalArgumentException(e);
+		Field field = getField(obj.getClass(), fieldName);
+		if (field == null) {
+			return null;
+		} else {
+			return getFieldValue(obj, field);
 		}
 	}
 
+	/**
+	 * 根据set方法和get方法获取属性名称
+	 * 
+	 * @param method set或get方法
+	 */
 	public static String getFieldNameByMethod(Method method) {
 		String fieldName = method.getName().substring(3, method.getName().length());
 		fieldName = fieldName.substring(0, 1).toLowerCase() + fieldName.substring(1, fieldName.length());
 		return fieldName;
 	}
 
-	public static Field getFieldByMethod(Class<?> type, Method method) {
-		type = getRealCalssOfProxyClass(type);
+	/**
+	 * 根据set方法和get方法获取属性名称
+	 * 
+	 * @param objClass 要查找的类类型
+	 * @param method   set或get方法
+	 */
+	public static Field getFieldByMethod(Class<?> objClass, Method method) {
+		objClass = getRealCalssOfProxyClass(objClass);
 		String fieldName = getFieldNameByMethod(method);
-		return getDeclaredField(type, fieldName);
+		return getField(objClass, fieldName);
 	}
 
-	public static Class<?> getRealCalssOfProxyClass(Class<?> type) {
-		while (type.getSimpleName().indexOf("$$EnhancerByCGLIB$$") != -1) {
-			type = type.getSuperclass();
+	/**
+	 * 获取代理类的真实类
+	 * 
+	 * @param objClass 要获取的类类型
+	 */
+	public static Class<?> getRealCalssOfProxyClass(Class<?> objClass) {
+		while (objClass.getSimpleName().indexOf("CGLIB$") != -1) {
+			objClass = objClass.getSuperclass();
 		}
-		return type;
+		return objClass;
 	}
 
-	public static Field getDeclaredField(Class<?> type, String fieldName) {
-		List<Field> fields = getAllFields(type);
-		for (Field field : fields) {
-			if (field.getName().equals(fieldName)) {
-				return field;
-			}
-		}
-		return null;
-	}
-
-	/** 获取类的父类泛型类型参数 */
-	public static Class<?> getGenericSuperclass(Class<?> clazz, int order) {
-		Type type = ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[order];
+	/**
+	 * 获取类的父类泛型类型参数
+	 * 
+	 * @param objClass 要获取的类类型
+	 * @param order    获取第几个泛型参数
+	 */
+	public static Class<?> getGenericSuperclass(Class<?> objClass, int order) {
+		Type type = ((ParameterizedType) objClass.getGenericSuperclass()).getActualTypeArguments()[order];
 		Class<?> genericsCalss = null;
 		try {
 			genericsCalss = Class.forName(type.getTypeName());
@@ -201,13 +291,23 @@ public class ReflectionUtils {
 		}
 	}
 
-	/** 获取类的父类泛型类型参数 */
-	public static Type getGenericSuperType(Class<?> clazz, int order) {
-		Type type = ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[order];
+	/**
+	 * 获取类的父类泛型类型参数
+	 * 
+	 * @param objClass 要获取的类类型
+	 * @param order    获取第几个泛型参数
+	 */
+	public static Type getGenericSuperType(Class<?> objClass, int order) {
+		Type type = ((ParameterizedType) objClass.getGenericSuperclass()).getActualTypeArguments()[order];
 		return type;
 	}
 
-	/** 获取field的泛型类型参数,eg List<T>, 获取T的类型 */
+	/**
+	 * 获取field的泛型类型参数,eg List&lt;T&gt;, 获取T的类型
+	 * 
+	 * @param field 要获取的field
+	 * @param order 获取第几个泛型参数
+	 */
 	public static Class<?> getFiledGenericclass(Field field, int order) {
 		ParameterizedType parameterizedType = (ParameterizedType) field.getGenericType();
 		if (parameterizedType == null) {
@@ -223,9 +323,13 @@ public class ReflectionUtils {
 		}
 	}
 
-	/** 判断一个类是否是代理类 */
-	public static boolean isProxyClass(Class<?> clazz) {
-		if (clazz.getSimpleName().indexOf("$$EnhancerByCGLIB$$") != -1) {
+	/**
+	 * 判断一个类是否是代理类
+	 * 
+	 * @param objClass 要判断的类类型
+	 */
+	public static boolean isProxyClass(Class<?> objClass) {
+		if (objClass.getSimpleName().indexOf("CGLIB$") != -1) {
 			return true;
 		} else {
 			return false;
