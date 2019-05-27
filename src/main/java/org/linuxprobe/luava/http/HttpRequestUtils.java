@@ -80,8 +80,8 @@ public class HttpRequestUtils {
 	 * @param url 请求地址
 	 */
 	public CloseableHttpResponse getRequest(String url) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("本次请求地址:" + url);
+		if (logger.isTraceEnabled()) {
+			logger.trace("本次请求地址:" + url);
 		}
 		CloseableHttpClient httpclient = this.getHttpClient();
 		HttpGet httpGet = new HttpGet(url);
@@ -118,8 +118,8 @@ public class HttpRequestUtils {
 	 * @param url 请求地址
 	 */
 	public CloseableHttpResponse deleteRequest(String url) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("本次请求地址:" + url);
+		if (logger.isTraceEnabled()) {
+			logger.trace("本次请求地址:" + url);
 		}
 		CloseableHttpClient httpclient = this.getHttpClient();
 		HttpDelete httpGet = new HttpDelete(url);
@@ -156,8 +156,8 @@ public class HttpRequestUtils {
 	 * @param url 请求地址
 	 */
 	public CloseableHttpResponse headRequest(String url) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("本次请求地址:" + url);
+		if (logger.isTraceEnabled()) {
+			logger.trace("本次请求地址:" + url);
 		}
 		CloseableHttpClient httpclient = this.getHttpClient();
 		HttpHead httpGet = new HttpHead(url);
@@ -194,8 +194,8 @@ public class HttpRequestUtils {
 	 * @param url 请求地址
 	 */
 	public CloseableHttpResponse optionsRequest(String url) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("本次请求地址:" + url);
+		if (logger.isTraceEnabled()) {
+			logger.trace("本次请求地址:" + url);
 		}
 		CloseableHttpClient httpclient = this.getHttpClient();
 		HttpOptions httpGet = new HttpOptions(url);
@@ -242,15 +242,15 @@ public class HttpRequestUtils {
 				url += "?" + urlParam;
 			}
 		}
-		if (logger.isDebugEnabled()) {
-			logger.debug("本次请求地址:" + url);
+		if (logger.isTraceEnabled()) {
+			logger.trace("本次请求地址:" + url);
 		}
 		CloseableHttpClient httpclient = this.getHttpClient();
 		HttpPost httpPost = new HttpPost(url);
 		if (bodyParam != null) {
 			if (bodyParam instanceof HttpEntity) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("本次请求body参数:" + bodyParam);
+				if (logger.isTraceEnabled()) {
+					logger.trace("本次请求body参数:" + bodyParam);
 				}
 				httpPost.setEntity((HttpEntity) bodyParam);
 			} else {
@@ -262,8 +262,8 @@ public class HttpRequestUtils {
 				} else {
 					bodyStr = JacksonUtils.toJsonString(bodyParam);
 				}
-				if (logger.isDebugEnabled()) {
-					logger.debug("本次请求body参数:" + bodyStr);
+				if (logger.isTraceEnabled()) {
+					logger.trace("本次请求body参数:" + bodyStr);
 				}
 				httpPost.setEntity(new StringEntity(bodyStr, ContentType.APPLICATION_JSON));
 			}
@@ -322,15 +322,15 @@ public class HttpRequestUtils {
 				url += "?" + urlParam;
 			}
 		}
-		if (logger.isDebugEnabled()) {
-			logger.debug("本次请求地址:" + url);
+		if (logger.isTraceEnabled()) {
+			logger.trace("本次请求地址:" + url);
 		}
 		CloseableHttpClient httpclient = this.getHttpClient();
 		HttpPut httpPost = new HttpPut(url);
 		if (bodyParam != null) {
 			if (bodyParam instanceof HttpEntity) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("本次请求body参数:" + bodyParam);
+				if (logger.isTraceEnabled()) {
+					logger.trace("本次请求body参数:" + bodyParam);
 				}
 				httpPost.setEntity((HttpEntity) bodyParam);
 			} else {
@@ -342,8 +342,8 @@ public class HttpRequestUtils {
 				} else {
 					bodyStr = JacksonUtils.toJsonString(bodyParam);
 				}
-				if (logger.isDebugEnabled()) {
-					logger.debug("本次请求body参数:" + bodyStr);
+				if (logger.isTraceEnabled()) {
+					logger.trace("本次请求body参数:" + bodyStr);
 				}
 				httpPost.setEntity(new StringEntity(bodyStr, ContentType.APPLICATION_JSON));
 			}
