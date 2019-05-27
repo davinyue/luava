@@ -192,7 +192,8 @@ public class ReflectionUtils {
 	 * @param obj   要操作的对象
 	 * @param field 要获取的属性
 	 */
-	public static Object getFieldValue(Object obj, Field field) {
+	@SuppressWarnings("unchecked")
+	public static <T> T getFieldValue(Object obj, Field field) {
 		if (obj == null || field == null) {
 			return null;
 		}
@@ -218,7 +219,7 @@ public class ReflectionUtils {
 				throw new RuntimeException(e);
 			}
 		}
-		return value;
+		return (T) value;
 	}
 
 	/**
@@ -227,7 +228,7 @@ public class ReflectionUtils {
 	 * @param obj       要操作的对象
 	 * @param fieldName 要获取的属性名称
 	 */
-	public static Object getFieldValue(Object obj, String fieldName) {
+	public static <T> T getFieldValue(Object obj, String fieldName) {
 		if (obj == null || fieldName == null || fieldName.isEmpty()) {
 			return null;
 		}
