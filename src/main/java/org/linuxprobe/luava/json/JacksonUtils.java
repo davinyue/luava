@@ -3,9 +3,7 @@ package org.linuxprobe.luava.json;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -29,9 +27,6 @@ public class JacksonUtils {
 	private static void initUniversalConfig(ObjectMapper objectMapper) {
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		objectMapper.setSerializationInclusion(Include.NON_NULL);
-		objectMapper.setVisibility(PropertyAccessor.SETTER, Visibility.NONE);
-		objectMapper.setVisibility(PropertyAccessor.GETTER, Visibility.NONE);
-		objectMapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
 	}
 
 	/**

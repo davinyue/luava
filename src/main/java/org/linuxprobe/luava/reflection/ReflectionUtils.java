@@ -142,7 +142,7 @@ public class ReflectionUtils {
 	/**
 	 * 设置属性值
 	 * 
-	 * @param obj   要操作的对象
+	 * @param obj   要设置的对象
 	 * @param field 要设置的属性
 	 * @param value 要设置的值
 	 */
@@ -171,7 +171,7 @@ public class ReflectionUtils {
 	/**
 	 * 设置属性值
 	 * 
-	 * @param obj       要操作的对象
+	 * @param obj       要设置的对象
 	 * @param fieldName 要设置的属性名称
 	 * @param value     要设置的值
 	 */
@@ -189,7 +189,7 @@ public class ReflectionUtils {
 	/**
 	 * 获取属性值
 	 * 
-	 * @param obj   要操作的对象
+	 * @param obj   要获取的对象
 	 * @param field 要获取的属性
 	 */
 	@SuppressWarnings("unchecked")
@@ -225,7 +225,7 @@ public class ReflectionUtils {
 	/**
 	 * 获取属性值
 	 * 
-	 * @param obj       要操作的对象
+	 * @param obj       要获取的对象
 	 * @param fieldName 要获取的属性名称
 	 */
 	public static <T> T getFieldValue(Object obj, String fieldName) {
