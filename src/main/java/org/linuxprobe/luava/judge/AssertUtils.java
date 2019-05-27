@@ -1,5 +1,8 @@
 package org.linuxprobe.luava.judge;
 
+import java.util.Collection;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 
 /** 断言工具 */
@@ -122,6 +125,30 @@ public class AssertUtils {
 	 */
 	public static void isEmpty(CharSequence object, String errorMessage) {
 		if (!StringUtils.isEmpty(object)) {
+			throw new IllegalArgumentException(errorMessage);
+		}
+	}
+
+	public static void isNotEmpty(Collection<?> object, String errorMessage) {
+		if (object == null || object.isEmpty()) {
+			throw new IllegalArgumentException(errorMessage);
+		}
+	}
+
+	public static void isEmpty(Collection<?> object, String errorMessage) {
+		if (object != null && !object.isEmpty()) {
+			throw new IllegalArgumentException(errorMessage);
+		}
+	}
+
+	public static void isNotEmpty(Map<?, ?> object, String errorMessage) {
+		if (object == null || object.isEmpty()) {
+			throw new IllegalArgumentException(errorMessage);
+		}
+	}
+
+	public static void isEmpty(Map<?, ?> object, String errorMessage) {
+		if (object != null && !object.isEmpty()) {
 			throw new IllegalArgumentException(errorMessage);
 		}
 	}
