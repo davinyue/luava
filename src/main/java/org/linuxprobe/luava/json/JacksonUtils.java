@@ -36,7 +36,7 @@ public class JacksonUtils {
 	 */
 	public static String toJsonString(Object obj) {
 		if (obj instanceof String) {
-			throw new IllegalArgumentException("obj can't be string");
+			return (String) obj;
 		}
 		try {
 			return defaultObjectMapper.writeValueAsString(obj);
@@ -53,7 +53,7 @@ public class JacksonUtils {
 	public static String toJsonString(Object obj, JsonFactory jf, DefaultSerializerProvider sp,
 			DefaultDeserializationContext dc) {
 		if (obj instanceof String) {
-			throw new IllegalArgumentException("obj can't be string");
+			return (String) obj;
 		}
 		ObjectMapper objectMapper = new ObjectMapper(jf, sp, dc);
 		try {
@@ -70,7 +70,7 @@ public class JacksonUtils {
 	 */
 	public static String toJsonString(Object obj, JsonFactory jf) {
 		if (obj instanceof String) {
-			throw new IllegalArgumentException("obj can't be string");
+			return (String) obj;
 		}
 		ObjectMapper objectMapper = new ObjectMapper(jf);
 		try {
@@ -88,7 +88,7 @@ public class JacksonUtils {
 	 */
 	public static String toJsonString(Object obj, String datePattern) {
 		if (obj instanceof String) {
-			throw new IllegalArgumentException("obj can't be string");
+			return (String) obj;
 		}
 		ObjectMapper objectMapper = new ObjectMapper();
 		initUniversalConfig(objectMapper);
@@ -107,7 +107,7 @@ public class JacksonUtils {
 	 */
 	public static String toSnameCaseJsonString(Object obj) {
 		if (obj instanceof String) {
-			throw new IllegalArgumentException("obj can't be string");
+			return (String) obj;
 		}
 		try {
 			return defaultSnameCaseObjectMapper.writeValueAsString(obj);
@@ -124,7 +124,7 @@ public class JacksonUtils {
 	 */
 	public static String toSnameCaseJsonString(Object obj, String datePattern) {
 		if (obj instanceof String) {
-			throw new IllegalArgumentException("obj can't be string");
+			return (String) obj;
 		}
 		ObjectMapper objectMapper = new ObjectMapper();
 		initUniversalConfig(objectMapper);
@@ -235,7 +235,7 @@ public class JacksonUtils {
 	 * @param data 输入数据
 	 * @param type 转换的目标类型, 可传入com.fasterxml.jackson.databind.JavaType类型, 用于处理泛型
 	 */
-	public static <T> T conversionSnameCase(Object data, Class<T> type) {
+	public static <T> T snameCaseConversion(Object data, Class<T> type) {
 		try {
 			String stringValue = null;
 			if (data instanceof String) {
@@ -258,7 +258,7 @@ public class JacksonUtils {
 	 *                    用于处理泛型
 	 * @param datePattern 时间输出格式
 	 */
-	public static <T> T conversionSnameCase(Object data, Class<T> type, String datePattern) {
+	public static <T> T snameCaseConversion(Object data, Class<T> type, String datePattern) {
 		ObjectMapper objectMapper = new ObjectMapper();
 		initUniversalConfig(objectMapper);
 		objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
@@ -380,7 +380,7 @@ public class JacksonUtils {
 	 * @param type 转换的目标类型, 可调用org.linuxprobe.luava.json.JacksonUtils.getJavaType获取,
 	 *             用于处理泛型
 	 */
-	public static <T> T conversionSnameCase(Object data, JavaType type) {
+	public static <T> T snameCaseConversion(Object data, JavaType type) {
 		try {
 			String stringValue = null;
 			if (data instanceof String) {
@@ -404,7 +404,7 @@ public class JacksonUtils {
 	 *                    用于处理泛型
 	 * @param datePattern 时间输出格式
 	 */
-	public static <T> T conversionSnameCase(Object data, JavaType type, String datePattern) {
+	public static <T> T snameCaseConversion(Object data, JavaType type, String datePattern) {
 		ObjectMapper objectMapper = new ObjectMapper();
 		initUniversalConfig(objectMapper);
 		objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
@@ -550,7 +550,7 @@ public class JacksonUtils {
 	 *             TypeReference&lt;List&lt;Integer&gt;&gt;() { },
 	 *             将返回List&lt;Integer&gt
 	 */
-	public static <T> T conversionSnameCase(Object data, TypeReference<?> type) {
+	public static <T> T snameCaseConversion(Object data, TypeReference<?> type) {
 		try {
 			String stringValue = null;
 			if (data instanceof String) {
@@ -574,7 +574,7 @@ public class JacksonUtils {
 	 *                    将返回List&lt;Integer&gt
 	 * @param datePattern 时间输出格式
 	 */
-	public static <T> T conversionSnameCase(Object data, TypeReference<?> type, String datePattern) {
+	public static <T> T snameCaseConversion(Object data, TypeReference<?> type, String datePattern) {
 		ObjectMapper objectMapper = new ObjectMapper();
 		initUniversalConfig(objectMapper);
 		objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
