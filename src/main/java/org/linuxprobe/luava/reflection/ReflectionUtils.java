@@ -75,6 +75,7 @@ public class ReflectionUtils {
 		try {
 			methodOfSet = objClass.getMethod("set" + funSuffix, field.getType());
 		} catch (NoSuchMethodException | SecurityException e) {
+			throw new IllegalArgumentException(e);
 		}
 		return methodOfSet;
 	}
@@ -120,6 +121,7 @@ public class ReflectionUtils {
 		try {
 			methodOfGet = objClass.getMethod(prefix + funSuffix);
 		} catch (NoSuchMethodException | SecurityException e) {
+			throw new IllegalArgumentException(e);
 		}
 		return methodOfGet;
 	}
@@ -142,28 +144,60 @@ public class ReflectionUtils {
 	/**
 	 * 设置属性值
 	 * 
-	 * @param obj   要设置的对象
-	 * @param field 要设置的属性
-	 * @param value 要设置的值
+	 * @param obj        要设置的对象
+	 * @param field      要设置的属性
+	 * @param value      要设置的值
+	 * @param userSetter 是否使用set函数
 	 */
-	public static void setField(Object obj, Field field, Object value) {
+	public static void setFieldValue(Object obj, Field field, Object value, boolean userSetter) {
 		if (obj == null || field == null) {
 			return;
 		}
 		Class<?> objClass = getRealCalssOfProxyClass(obj.getClass());
-		Method methodOfSet = getMethodOfFieldSet(objClass, field);
-		if (methodOfSet != null) {
-			try {
-				methodOfSet.invoke(obj, value);
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				throw new IllegalArgumentException(e);
-			}
-		} else {
+		if (!userSetter) {
 			field.setAccessible(true);
 			try {
 				field.set(objClass, value);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				throw new IllegalArgumentException(e);
+			}
+		} else {
+			Method methodOfSet = getMethodOfFieldSet(objClass, field);
+			methodOfSet.setAccessible(true);
+			try {
+				methodOfSet.invoke(obj, value);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				throw new IllegalArgumentException(e);
+			}
+		}
+	}
+
+	/**
+	 * 设置属性值
+	 * 
+	 * @param obj   要设置的对象
+	 * @param field 要设置的属性
+	 * @param value 要设置的值
+	 */
+	public static void setFieldValue(Object obj, Field field, Object value) {
+		setFieldValue(obj, field, value, false);
+	}
+
+	/**
+	 * 设置属性值
+	 * 
+	 * @param obj        要设置的对象
+	 * @param fieldName  要设置的属性名称
+	 * @param value      要设置的值
+	 * @param userSetter 是否使用set函数
+	 */
+	public static void setFieldValue(Object obj, String fieldName, Object value, boolean userSetter) {
+		if (obj == null || fieldName == null || fieldName.isEmpty()) {
+			return;
+		} else {
+			Field field = getField(obj.getClass(), fieldName);
+			if (field != null) {
+				setFieldValue(obj, field, value, userSetter);
 			}
 		}
 	}
@@ -175,15 +209,41 @@ public class ReflectionUtils {
 	 * @param fieldName 要设置的属性名称
 	 * @param value     要设置的值
 	 */
-	public static void setField(Object obj, String fieldName, Object value) {
-		if (obj == null || fieldName == null || fieldName.isEmpty()) {
-			return;
+	public static void setFieldValue(Object obj, String fieldName, Object value) {
+		setFieldValue(obj, fieldName, value, false);
+	}
+
+	/**
+	 * 获取属性值
+	 * 
+	 * @param obj        要获取的对象
+	 * @param field      要获取的属性
+	 * @param userGetter 是否使用get函数
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T getFieldValue(Object obj, Field field, boolean userGetter) {
+		if (obj == null || field == null) {
+			return null;
+		}
+		Class<?> objClass = getRealCalssOfProxyClass(obj.getClass());
+		T result = null;
+		if (!userGetter) {
+			field.setAccessible(true);
+			try {
+				result = (T) field.get(obj);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				throw new IllegalArgumentException(e);
+			}
 		} else {
-			Field field = getField(obj.getClass(), fieldName);
-			if (field != null) {
-				setField(obj, field, value);
+			Method getMethod = getMethodOfFieldGet(objClass, field);
+			getMethod.setAccessible(true);
+			try {
+				result = (T) getMethod.invoke(obj);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				throw new IllegalArgumentException(e);
 			}
 		}
+		return result;
 	}
 
 	/**
@@ -192,34 +252,27 @@ public class ReflectionUtils {
 	 * @param obj   要获取的对象
 	 * @param field 要获取的属性
 	 */
-	@SuppressWarnings("unchecked")
 	public static <T> T getFieldValue(Object obj, Field field) {
-		if (obj == null || field == null) {
+		return getFieldValue(obj, field, false);
+	}
+
+	/**
+	 * 获取属性值
+	 * 
+	 * @param obj        要获取的对象
+	 * @param fieldName  要获取的属性名称
+	 * @param userGetter 是否使用get函数
+	 */
+	public static <T> T getFieldValue(Object obj, String fieldName, boolean userGetter) {
+		if (obj == null || fieldName == null || fieldName.isEmpty()) {
 			return null;
 		}
-		Class<?> objClass = getRealCalssOfProxyClass(obj.getClass());
-		Method getMethod = null;
-		try {
-			getMethod = getMethodOfFieldGet(objClass, field);
-		} catch (Exception e) {
-		}
-		Object value = null;
-		if (getMethod != null) {
-			getMethod.setAccessible(true);
-			try {
-				value = getMethod.invoke(obj);
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				throw new IllegalArgumentException(e);
-			}
+		Field field = getField(obj.getClass(), fieldName);
+		if (field == null) {
+			return null;
 		} else {
-			field.setAccessible(true);
-			try {
-				value = field.get(obj);
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				throw new RuntimeException(e);
-			}
+			return getFieldValue(obj, field, userGetter);
 		}
-		return (T) value;
 	}
 
 	/**
@@ -229,15 +282,7 @@ public class ReflectionUtils {
 	 * @param fieldName 要获取的属性名称
 	 */
 	public static <T> T getFieldValue(Object obj, String fieldName) {
-		if (obj == null || fieldName == null || fieldName.isEmpty()) {
-			return null;
-		}
-		Field field = getField(obj.getClass(), fieldName);
-		if (field == null) {
-			return null;
-		} else {
-			return getFieldValue(obj, field);
-		}
+		return getFieldValue(obj, fieldName, false);
 	}
 
 	/**
