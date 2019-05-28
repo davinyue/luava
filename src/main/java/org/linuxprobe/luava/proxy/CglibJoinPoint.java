@@ -2,7 +2,7 @@ package org.linuxprobe.luava.proxy;
 
 import java.lang.reflect.Method;
 
-import net.sf.cglib.proxy.MethodProxy;
+import org.springframework.cglib.proxy.MethodProxy;
 
 public class CglibJoinPoint extends JoinPoint {
 	/** 函数代理对象 */

@@ -2,7 +2,7 @@ package org.linuxprobe.luava.proxy;
 
 import java.lang.reflect.Proxy;
 
-import net.sf.cglib.proxy.Enhancer;
+import org.springframework.cglib.proxy.Enhancer;
 
 public class ProxyFactory {
 	/**
