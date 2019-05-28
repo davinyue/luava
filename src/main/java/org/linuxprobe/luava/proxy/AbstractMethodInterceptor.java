@@ -17,14 +17,14 @@ public abstract class AbstractMethodInterceptor implements MethodInterceptor {
 	 * @return 返回true时, 继续后续执行目标函数和afterCompletion,返回false时, 不继续执行目标函数,将返回
 	 *         joinPoint持有的结果
 	 */
-	public abstract boolean preHandle(CglibJoinPoint joinPoint) throws Exception;
+	public abstract boolean preHandle(CglibJoinPoint joinPoint) throws Throwable;
 
 	/**
 	 * 执行后
 	 * 
 	 * @param joinPoint 执行信息持有对象, 包括代理对象, 执行方法, 执行参数, 目标函数执行结果, 可对结果进行修改,将返回本对象持有的结果
 	 */
-	public abstract void afterCompletion(CglibJoinPoint joinPoint) throws Exception;
+	public abstract void afterCompletion(CglibJoinPoint joinPoint) throws Throwable;
 
 	@Override
 	public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {

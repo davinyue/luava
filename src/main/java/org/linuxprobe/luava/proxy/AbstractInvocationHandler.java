@@ -18,14 +18,14 @@ public abstract class AbstractInvocationHandler implements InvocationHandler {
 	 * @return 返回true时, 继续后续执行目标函数和afterCompletion,返回false时, 不继续执行目标函数,将返回
 	 *         joinPoint持有的结果
 	 */
-	public abstract boolean preHandle(JoinPoint joinPoint) throws Exception;
+	public abstract boolean preHandle(JoinPoint joinPoint) throws Throwable;
 
 	/**
 	 * 执行后
 	 * 
 	 * @param joinPoint 执行信息持有对象, 包括代理对象, 执行方法, 执行参数, 目标函数执行结果, 可对结果进行修改,将返回本对象持有的结果
 	 */
-	public abstract void afterCompletion(JoinPoint joinPoint) throws Exception;
+	public abstract void afterCompletion(JoinPoint joinPoint) throws Throwable;
 
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
