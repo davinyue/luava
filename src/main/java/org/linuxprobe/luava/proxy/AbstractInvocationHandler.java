@@ -3,9 +3,8 @@ package org.linuxprobe.luava.proxy;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
+/** java 动态代理 */
 public abstract class AbstractInvocationHandler implements InvocationHandler, HandlerInterceptor {
-	public abstract Object getHandler();
-
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		Object handler = this.getHandler();
