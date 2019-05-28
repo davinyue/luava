@@ -2,6 +2,7 @@ package org.linuxprobe.luava.reflection;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,12 +14,38 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 public class BeanUtils {
-	public static void copyProperties(Object sorce, Object target) {
-		copyProperties(sorce, target, new CopyOptions());
+	/**
+	 * bean属性拷贝,把source bean的属性拷贝到target bean
+	 * 
+	 * @param source       the source bean
+	 * @param target       the target bean
+	 * @param ignoreFields 忽略属性
+	 */
+	public static void copyProperties(Object source, Object target, String... ignoreFields) {
+		CopyOptions copyOptions = new CopyOptions();
+		copyOptions.setIgnoreFields(Arrays.asList(ignoreFields));
+		copyProperties(source, target, copyOptions);
 	}
 
-	public static void copyProperties(Object sorce, Object target, CopyOptions copyOptions) {
-		if (sorce == null || target == null) {
+	/**
+	 * bean属性拷贝,把source bean的属性拷贝到target bean
+	 * 
+	 * @param source the source bean
+	 * @param target the target bean
+	 */
+	public static void copyProperties(Object source, Object target) {
+		copyProperties(source, target, new CopyOptions());
+	}
+
+	/**
+	 * bean属性拷贝,把source bean的属性拷贝到target bean
+	 * 
+	 * @param source      the source bean
+	 * @param target      the target bean
+	 * @param copyOptions 拷贝属性
+	 */
+	public static void copyProperties(Object source, Object target, CopyOptions copyOptions) {
+		if (source == null || target == null) {
 			return;
 		}
 		if (copyOptions == null) {
@@ -30,7 +57,7 @@ public class BeanUtils {
 		if (copyOptions.getIgnoreFields() == null) {
 			copyOptions.setIgnoreFields(new LinkedList<>());
 		}
-		Map<String, Field> sourceFieldMap = getFieldMap(sorce.getClass());
+		Map<String, Field> sourceFieldMap = getFieldMap(source.getClass());
 		Map<String, Field> targetFieldMap = getFieldMap(target.getClass());
 		Set<String> fieldNames = sourceFieldMap.keySet();
 		for (String fieldName : fieldNames) {
@@ -40,9 +67,9 @@ public class BeanUtils {
 			} else {
 				Object sourceValue = null;
 				if (copyOptions.isUseGetter()) {
-					sourceValue = ReflectionUtils.getFieldValue(sorce, sourceField, true);
+					sourceValue = ReflectionUtils.getFieldValue(source, sourceField, true);
 				} else {
-					sourceValue = ReflectionUtils.getFieldValue(sorce, sourceField, false);
+					sourceValue = ReflectionUtils.getFieldValue(source, sourceField, false);
 				}
 				if (sourceValue == null && copyOptions.isIgnoreNullValue()) {
 					continue;
