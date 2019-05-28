@@ -10,7 +10,6 @@ public class ProxyFactory {
 	 * 
 	 * @param type 代理对象的类型
 	 */
-	@SuppressWarnings("unchecked")
 	public static <T> T getProxyInstance(AbstractMethodInterceptor interceptor, Class<T> type) {
 		/** 创建加强器，用来创建动态代理类 */
 		Enhancer enhancer = new Enhancer();
@@ -18,8 +17,11 @@ public class ProxyFactory {
 		enhancer.setSuperclass(type);
 		/** 设置回调：对于代理类上所有方法的调用，都会调用CallBack，而Callback则需要实现intercept()方法进行拦 */
 		enhancer.setCallback(interceptor);
+		@SuppressWarnings("unchecked")
+		T instance = (T) enhancer.create();
+		interceptor.setInstance(instance);
 		/** 创建动态代理类对象并返回 */
-		return (T) enhancer.create();
+		return instance;
 	}
 
 	/**

@@ -2,11 +2,17 @@ package org.linuxprobe.luava.proxy;
 
 import java.lang.reflect.Method;
 
+import lombok.Getter;
+import lombok.Setter;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
 /** cglib动态代理 */
 public abstract class AbstractMethodInterceptor implements MethodInterceptor {
+	@Getter
+	@Setter
+	private Object instance;
+
 	/**
 	 * 执行前
 	 * 
