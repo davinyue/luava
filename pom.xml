@@ -90,6 +90,11 @@
 			<artifactId>luava-http</artifactId>
 			<version>0.0.1.RELEASE</version>
 		</dependency>
+		<dependency>
+			<groupId>org.linuxprobe</groupId>
+			<artifactId>luava-reflection</artifactId>
+			<version>0.0.1.RELEASE</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
