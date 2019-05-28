@@ -83,7 +83,7 @@ public class BeanUtils {
 						continue;
 					}
 					try {
-						if (copyOptions.isUsrSetter()) {
+						if (copyOptions.isUseSetter()) {
 							ReflectionUtils.setFieldValue(target, targetField, sourceValue, true);
 						} else {
 							ReflectionUtils.setFieldValue(target, targetField, sourceValue, false);
@@ -128,7 +128,7 @@ public class BeanUtils {
 		/** 使用get函数 */
 		private boolean useGetter = true;
 		/** 使用set函数 */
-		private boolean usrSetter = true;
+		private boolean useSetter = true;
 
 		public CopyOptions addIgnorePropertie(String propertie) {
 			this.ignoreFields.add(propertie);
