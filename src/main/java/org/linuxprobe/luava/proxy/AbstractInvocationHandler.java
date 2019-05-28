@@ -4,7 +4,29 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 /** java 动态代理 */
-public abstract class AbstractInvocationHandler implements InvocationHandler, HandlerInterceptor {
+public abstract class AbstractInvocationHandler implements InvocationHandler {
+	/** 获取目标执行对象 */
+	public abstract Object getHandler();
+
+	/**
+	 * 执行前
+	 * 
+	 * @param joinPoint 执行信息持有对象, 包括代理对象, 执行方法, 执行参数, 执行结果(null); 可对执行参数进行修改,
+	 *                  本方法返回true时, 将使用本对象持有的参数调用目标对象的方法; 可对结果进行修改, 本方法返回false时,
+	 *                  将返回本对象持有的结果; 可对invokeAfterCompletion(是否执行后继函数)进行修改,
+	 *                  为false时,将不执行afterCompletion函数
+	 * @return 返回true时, 继续后续执行目标函数和afterCompletion,返回false时, 不继续执行目标函数,将返回
+	 *         joinPoint持有的结果
+	 */
+	public abstract boolean preHandle(JoinPoint joinPoint) throws Exception;
+
+	/**
+	 * 执行后
+	 * 
+	 * @param joinPoint 执行信息持有对象, 包括代理对象, 执行方法, 执行参数, 目标函数执行结果, 可对结果进行修改,将返回本对象持有的结果
+	 */
+	public abstract void afterCompletion(JoinPoint joinPoint) throws Exception;
+
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		Object handler = this.getHandler();
@@ -15,12 +37,15 @@ public abstract class AbstractInvocationHandler implements InvocationHandler, Ha
 		joinPoint.setArgs(args);
 		if (this.preHandle(joinPoint)) {
 			method.setAccessible(true);
-			joinPoint.setResult(method.invoke(handler, args));
+			Object result = method.invoke(handler, joinPoint.getArgs());
+			if (!joinPoint.isInvokeAfterCompletion()) {
+				return result;
+			}
+			joinPoint.setResult(result);
 			this.afterCompletion(joinPoint);
 			return joinPoint.getResult();
 		} else {
 			return joinPoint.getResult();
 		}
 	}
-
 }

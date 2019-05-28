@@ -17,6 +17,8 @@ public class JoinPoint {
 	private Object proxy;
 	/** 执行方法 */
 	private Method method;
+	/** 是否执行后继函数 */
+	private boolean invokeAfterCompletion = true;
 
 	/** 获取结果 */
 	public Object getResult() {
@@ -46,5 +48,15 @@ public class JoinPoint {
 	/** 获取执行方法 */
 	public Method getMethod() {
 		return method;
+	}
+
+	/** 获取是否执行后继函数 */
+	public boolean isInvokeAfterCompletion() {
+		return invokeAfterCompletion;
+	}
+
+	/** 设置是否执行后继函数 */
+	public void setInvokeAfterCompletion(boolean invokeAfterCompletion) {
+		this.invokeAfterCompletion = invokeAfterCompletion;
 	}
 }
